@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Library Book Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="/home" class="brand">
+        <span class="brand-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </span>
+        BookNest Library
+      </a>
+      <ul class="nav-links">
+        <li><a href="/">Welcome</a></li>
+        <li><a href="/home" class="active">Home</a></li>
+        <li><a href="#books">Books</a></li>
+        <li><a href="#add">Add Book</a></li>
+        <li><a href="/about">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="container">
+      <span class="eyebrow">Node.js &middot; HTTP &amp; FS Modules</span>
+      <h1>Your library, <span>beautifully</span> organised.</h1>
+      <p>Browse the collection, search by title or author, and add new books, all powered by a pure Node.js HTTP server.</p>
+      <div class="hero-actions">
+        <a href="#books" class="btn btn-primary">Browse Books</a>
+        <a href="#add" class="btn btn-outline">Add a Book</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Stats -->
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-label">Total Books</div>
+        <div class="stat-value" id="stat-total">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Authors</div>
+        <div class="stat-value" id="stat-authors">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Average Price</div>
+        <div class="stat-value" id="stat-avg">&#8377;0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Collection Value</div>
+        <div class="stat-value" id="stat-value">&#8377;0</div>
+      </div>
+    </section>
+
+    <!-- Books -->
+    <section class="section" id="books">
+      <div class="section-head">
+        <div>
+          <h2>Book Collection</h2>
+          <p>Loaded live from the <code>GET /books</code> route.</p>
+        </div>
+        <label class="search">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input type="search" id="search" placeholder="Search title or author..." />
+        </label>
+      </div>
+      <div class="book-grid" id="book-grid">
+        <div class="empty">Loading books...</div>
+      </div>
+    </section>
+
+    <!-- Add book + routes -->
+    <section class="section split" id="add">
+      <div class="card">
+        <h3>Add a New Book</h3>
+        <p class="sub">Sends a JSON request to <code>POST /add-book</code>.</p>
+        <form id="add-form" novalidate>
+          <div class="form-grid">
+            <div class="field">
+              <label for="id">Book ID</label>
+              <input type="number" id="id" name="id" min="1" placeholder="e.g. 4" required />
+            </div>
+            <div class="field">
+              <label for="price">Price (&#8377;)</label>
+              <input type="number" id="price" name="price" min="0" step="0.01" placeholder="e.g. 550" required />
+            </div>
+            <div class="field full">
+              <label for="title">Title</label>
+              <input type="text" id="title" name="title" placeholder="e.g. Clean Code" required />
+            </div>
+            <div class="field full">
+              <label for="author">Author</label>
+              <input type="text" id="author" name="author" placeholder="e.g. Robert C. Martin" required />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Add Book</button>
+            <span class="message" id="form-message" role="status"></span>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h3>Server Routes</h3>
+        <p class="sub">HTTP server running on port 3000.</p>
+        <ul class="routes">
+          <li><span class="method get">GET</span><a href="/">/</a><span class="desc">Welcome page</span></li>
+          <li><span class="method get">GET</span><a href="/books">/books</a><span class="desc">Books as JSON</span></li>
+          <li><span class="method get">GET</span><a href="/about">/about</a><span class="desc">App information</span></li>
+          <li><span class="method get">GET</span><a href="/home">/home</a><span class="desc">This page (FS module)</span></li>
+          <li><span class="method post">POST</span><code>/add-book</code><span class="desc">Add a book</span></li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">MT1 Lab Examination &middot; Full Stack Development (Node.js)</div>
+  </footer>
+
+  <script>
+    const coverColors = ["#7a3e1d", "#2f5d62", "#5b3a70", "#8a5a1f", "#2e4a7d", "#7d2e46", "#3f6b3a"];
+    const grid = document.getElementById("book-grid");
+    const searchInput = document.getElementById("search");
+    const form = document.getElementById("add-form");
+    const message = document.getElementById("form-message");
+    let allBooks = [];
+
+    const formatPrice = (value) => "₹" + Number(value).toLocaleString("en-IN", { maximumFractionDigits: 2 });
+
+    function renderStats(books) {
+      const total = books.reduce((sum, book) => sum + Number(book.price), 0);
+      document.getElementById("stat-total").textContent = books.length;
+      document.getElementById("stat-authors").textContent = new Set(books.map((b) => b.author)).size;
+      document.getElementById("stat-avg").textContent = formatPrice(books.length ? total / books.length : 0);
+      document.getElementById("stat-value").textContent = formatPrice(total);
+    }
+
+    function renderBooks(books) {
+      grid.innerHTML = "";
+      if (books.length === 0) {
+        grid.innerHTML = '<div class="empty">No books match your search.</div>';
+        return;
+      }
+      books.forEach((book, index) => {
+        const card = document.createElement("article");
+        card.className = "book-card";
+        card.style.animationDelay = index * 0.05 + "s";
+
+        const cover = document.createElement("div");
+        cover.className = "book-cover";
+        cover.style.background = `linear-gradient(135deg, ${coverColors[book.id % coverColors.length]}, #1f1d1a)`;
+        cover.textContent = book.title;
+
+        const body = document.createElement("div");
+        body.className = "book-body";
+
+        const author = document.createElement("div");
+        author.className = "book-author";
+        author.textContent = "by " + book.author;
+
+        const meta = document.createElement("div");
+        meta.className = "book-meta";
+        const price = document.createElement("span");
+        price.className = "book-price";
+        price.textContent = formatPrice(book.price);
+        const id = document.createElement("span");
+        id.className = "book-id";
+        id.textContent = "ID " + book.id;
+        meta.append(price, id);
+
+        body.append(author, meta);
+        card.append(cover, body);
+        grid.appendChild(card);
+      });
+    }
+
+    function applySearch() {
+      const query = searchInput.value.trim().toLowerCase();
+      renderBooks(allBooks.filter((book) =>
+        book.title.toLowerCase().includes(query) || book.author.toLowerCase().includes(query)
+      ));
+    }
+
+    async function loadBooks() {
+      try {
+        const res = await fetch("/books");
+        const data = await res.json();
+        allBooks = data.books;
+        renderStats(allBooks);
+        applySearch();
+      } catch {
+        grid.innerHTML = '<div class="empty">Unable to load books. Is the server running?</div>';
+      }
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const book = {
+        id: Number(form.id.value),
+        title: form.title.value.trim(),
+        author: form.author.value.trim(),
+        price: Number(form.price.value),
+      };
+      if (!form.id.value || !book.title || !book.author || form.price.value === "") {
+        message.className = "message error";
+        message.textContent = "Please fill in all fields.";
+        return;
+      }
+      try {
+        const res = await fetch("/add-book", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(book),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          message.className = "message error";
+          message.textContent = data.details ? data.details.join(", ") : data.error;
+          return;
+        }
+        message.className = "message success";
+        message.textContent = data.message;
+        form.reset();
+        loadBooks();
+      } catch {
+        message.className = "message error";
+        message.textContent = "Request failed. Is the server running?";
+      }
+    });
+
+    searchInput.addEventListener("input", applySearch);
+    loadBooks();
+  </script>
+</body>
+</html>
